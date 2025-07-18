@@ -16,6 +16,8 @@ npx sequelize-cli migration:generate --name demo-user
 npx sequelize-cli db:migrate
 ```
 
+<!-- NODE_ENV="production" npx sequelize-cli db:migrate -->
+
 ### Running a specific migration file, not all
 ```bash
 npx sequelize-cli db:migrate --name name-of-migration-file

@@ -16,21 +16,18 @@ module.exports = {
     }
   },
   production: {
-    database: process.env.AZURE_DBNAME,
-    username: process.env.AZURE_USERNAME,
-    password: process.env.AZURE_DB_PASSWORD,
-    host: process.env.AZURE_DB_HOST,
-    dialect: 'mssql',
-    port: 1433,
+    database: process.env.AWS_DBNAME,
+    username: process.env.AWS_USERNAME,
+    password: process.env.AWS_PASSWORD,
+    host: process.env.AWS_HOST,
+    dialect: process.env.AWS_DIALECT,
+    port: process.env.AWS_PORT || 3306,
     logging: false,
     dialectOptions: {
-      options: {
-        encrypt: true,
-        trustServerCertificate: false,
-        enableArithAbort: true,
-        connectTimeout: 60000,
-        requestTimeout: 60000,
-      },
+      ssl: {
+        require: false,
+        rejectUnauthorized: false
+      }
     }
   }
 }

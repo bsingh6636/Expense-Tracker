@@ -3,25 +3,21 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.changeColumn('expenses', 'payment_method', {
-      type: Sequelize.STRING,
-      allowNull: false,
-      defaultValue: 'upi'
-    });
+    await queryInterface.sequelize.query(`
+      ALTER TYPE "enum_expenses_payment_method" ADD VALUE IF NOT EXISTS 'upi';
+    `);
 
     await queryInterface.sequelize.query(`
-      ALTER TABLE expenses
-      ADD CONSTRAINT chk_payment_method
-      CHECK (payment_method IN ('cash', 'credit_card', 'debit_card', 'online_transfer', 'other', 'upi'))
-`);
+      ALTER TABLE "expenses" ALTER COLUMN "payment_method" SET DEFAULT 'upi';
+    `);
   },
 
   async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
+    await queryInterface.sequelize.query(`
+      ALTER TABLE "expenses" ALTER COLUMN "payment_method" SET DEFAULT 'cash';
+    `);
+
+    // Note: Removing a value from an ENUM is complex and often
+    // omitted in 'down' migrations unless absolutely necessary.
   }
 };
