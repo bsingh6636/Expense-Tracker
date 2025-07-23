@@ -1,5 +1,16 @@
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
-  const Expense = sequelize.define('Expense', {
+  class Expense extends Model {
+    static associate(models) {
+      Expense.belongsTo(models.Friend, {
+        foreignKey: 'friendId',
+        as: 'friend'
+      });
+    }
+  }
+  
+  Expense.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -32,7 +43,9 @@ module.exports = (sequelize, DataTypes) => {
         'education',
         'travel',
         'cig',
-        'other'
+        'other',
+        'subscription',
+        'friend'
       ),
       allowNull: false,
       defaultValue: 'other'
@@ -62,7 +75,7 @@ module.exports = (sequelize, DataTypes) => {
         'debit_card',
         'online_transfer',
         'other',
-        'upi',
+        'upi'
       ),
       allowNull: false,
       defaultValue: 'upi'
@@ -82,8 +95,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
       defaultValue: 0.00
+    },
+    friendId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'friends',
+        key: 'id'
+      }
     }
   }, {
+    sequelize,
+    modelName: 'Expense',
     tableName: 'expenses',
     timestamps: true,
     indexes: [
@@ -101,6 +124,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       {
         fields: ['payer_name']
+      },
+      {
+        fields: ['friendId']
       }
     ]
   });
@@ -116,28 +142,28 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   // Additional instance methods
-  Expense.prototype.getFormattedAmount = function() {
-    return new Intl.NumberFormat('en-US', {
+  Expense.prototype.getFormattedAmount = function () {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR'
     }).format(this.amount);
   };
 
-  Expense.prototype.getFormattedBalance = function() {
+  Expense.prototype.getFormattedBalance = function () {
     if (this.current_balance) {
-      return new Intl.NumberFormat('en-US', {
+      return new Intl.NumberFormat('en-IN', {
         style: 'currency',
-        currency: 'USD'
+        currency: 'INR'
       }).format(this.current_balance);
     }
-    return '$0.00';
+    return '₹0.00';
   };
 
-  Expense.prototype.isCredit = function() {
+  Expense.prototype.isCredit = function () {
     return this.txn_type === 'credit';
   };
 
-  Expense.prototype.isDebit = function() {
+  Expense.prototype.isDebit = function () {
     return this.txn_type === 'debit';
   };
 
@@ -161,7 +187,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   // Transaction type summary
-  Expense.getTransactionSummary = async function() {
+  Expense.getTransactionSummary = async function () {
     const summary = await this.findAll({
       attributes: [
         'txn_type',
@@ -179,7 +205,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   // Payment method summary
-  Expense.getPaymentMethodSummary = async function() {
+  Expense.getPaymentMethodSummary = async function () {
     const summary = await this.findAll({
       attributes: [
         'payment_method',
@@ -198,7 +224,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   // Get net balance (credits - debits)
-  Expense.getNetBalance = async function() {
+  Expense.getNetBalance = async function () {
     const [credits, debits] = await Promise.all([
       this.findOne({
         attributes: [[sequelize.fn('SUM', sequelize.col('amount')), 'total']],

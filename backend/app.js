@@ -2,8 +2,10 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const db = require('./models');
 const expenseRoutes = require('./routes/expenses');
+const friendRoutes = require('./routes/friends');
+const db = require('./models');
+const logger = require('./utils/logger');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,6 +19,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/expenses', expenseRoutes);
+app.use('/api/friends', friendRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -29,12 +32,13 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
+
+
 // Database connection and server start
 db.sequelize.authenticate().then(() => {
-  console.log('Database connected successfully');
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    logger.info(`Server is running on port ${PORT}`);
   });
 }).catch(err => {
-  console.error('Unable to connect to database:', err);
+  logger.error('Unable to connect to database:', err);
 });

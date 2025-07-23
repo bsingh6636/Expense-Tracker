@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Expense } = require('../models');
 const { validateExpense } = require('../middleware/validation');
+const { createExpense } = require('../controllers/expense');
 
 // GET /api/expenses - Get all expenses
 router.get('/', async (req, res) => {
@@ -26,7 +27,7 @@ router.get('/', async (req, res) => {
     
     const expenses = await Expense.findAll({
       where: whereClause,
-      order: [['date', 'DESC']],
+      order: [['createdAt', 'DESC']],
       limit: parseInt(limit),
       offset: parseInt(offset)
     });
@@ -54,40 +55,16 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/expenses - Create new expense
-router.post('/', validateExpense, async (req, res) => {
-  try {
-    const { amount, description, category, date, txn_type, payment_method, balance } = req.body;
-    
-    const expense = await Expense.create({
-      amount: parseFloat(amount),
-      description,
-      category,
-      txn_type,
-      payment_method,
-      balance: Number(balance),
-      date: date ? new Date(date) : new Date()
-    });
-    
-    res.status(201).json(expense);
-  } catch (error) {
-    console.error('Error creating expense:', error);
-    
-    if (error.name === 'SequelizeValidationError') {
-      return res.status(400).json({
-        error: 'Validation error',
-        details: error.errors.map(e => e.message)
-      });
-    }
-    
-    res.status(500).json({ error: 'Failed to create expense' });
-  }
+
+router.post('/', async (req, res) => {
+   const data = await createExpense(req.body);
+   res.json(data);
 });
 
 // PUT /api/expenses/:id - Update expense
 router.put('/:id', validateExpense, async (req, res) => {
   try {
-    const { amount, description, category, date } = req.body;
+    const { amount, description, category, date, txn_type, payment_method, balance  } = req.body;
     
     const expense = await Expense.findByPk(req.params.id);
     
@@ -95,14 +72,16 @@ router.put('/:id', validateExpense, async (req, res) => {
       return res.status(404).json({ error: 'Expense not found' });
     }
     
-    await expense.update({
+   const updated = await expense.update({
       amount: parseFloat(amount),
       description,
       category,
-      date: date ? new Date(date) : expense.date
+      date: date ? new Date(date) : expense.date,
+      txn_type, payment_method, 
+      current_balance : balance
     });
     
-    res.json(expense);
+    res.json(updated);
   } catch (error) {
     console.error('Error updating expense:', error);
     
@@ -135,14 +114,14 @@ router.delete('/:id', async (req, res) => {
 });
 
 // GET /api/expenses/summary/categories - Get category summary
-router.get('/summary/categories', async (req, res) => {
-  try {
-    const summary = await Expense.getCategorySummary();
-    res.json(summary);
-  } catch (error) {
-    console.error('Error fetching category summary:', error);
-    res.status(500).json({ error: 'Failed to fetch category summary' });
-  }
-});
+// router.get('/summary/categories', async (req, res) => {
+//   try {
+//     const summary = await Expense.getCategorySummary();
+//     res.json(summary);
+//   } catch (error) {
+//     console.error('Error fetching category summary:', error);
+//     res.status(500).json({ error: 'Failed to fetch category summary' });
+//   }
+// });
 
 module.exports = router;

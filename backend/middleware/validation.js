@@ -25,7 +25,8 @@ const validateExpense = (req, res, next) => {
     'education',
     'travel',
     'cig',
-    'other'
+    'other',
+    'friend'
   ];
   
   if (!category || !validCategories.includes(category)) {
