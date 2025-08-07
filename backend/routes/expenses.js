@@ -2,41 +2,11 @@ const express = require('express');
 const router = express.Router();
 const { Expense } = require('../models');
 const { validateExpense } = require('../middleware/validation');
-const { createExpense } = require('../controllers/expense');
+const { createExpense, getExpenses } = require('../controllers/expense');
 
 // GET /api/expenses - Get all expenses
-router.get('/', async (req, res) => {
-  try {
-    const { category, startDate, endDate, limit = 50, offset = 0 } = req.query;
-    
-    let whereClause = {};
-    
-    if (category) {
-      whereClause.category = category;
-    }
-    
-    if (startDate || endDate) {
-      whereClause.date = {};
-      if (startDate) {
-        whereClause.date.$gte = new Date(startDate);
-      }
-      if (endDate) {
-        whereClause.date.$lte = new Date(endDate);
-      }
-    }
-    
-    const expenses = await Expense.findAll({
-      where: whereClause,
-      order: [['createdAt', 'DESC']],
-      limit: parseInt(limit),
-      offset: parseInt(offset)
-    });
-    
-    res.json(expenses);
-  } catch (error) {
-    console.error('Error fetching expenses:', error);
-    res.status(500).json({ error: 'Failed to fetch expenses' });
-  }
+router.get('/',  (req, res) => {
+   getExpenses(req , res)
 });
 
 // GET /api/expenses/:id - Get single expense

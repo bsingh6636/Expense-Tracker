@@ -10,7 +10,7 @@ const config = require('../config/database');
 const logger = require('../utils/logger');
 
 // Environment setup
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || 'production';
 dotenv.config({ path: path.resolve(__dirname, './../.env') });
 
 // Database configuration for current environment

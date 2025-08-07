@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const expenseRoutes = require('./routes/expenses');
 const friendRoutes = require('./routes/friends');
+const categoryRoutes = require('./routes/category')
 const db = require('./models');
 const logger = require('./utils/logger');
 
@@ -20,6 +21,7 @@ app.use(express.json());
 // Routes
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/friends', friendRoutes);
+app.use('/api/category',categoryRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

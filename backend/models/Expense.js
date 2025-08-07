@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'friendId',
         as: 'friend'
       });
+      Expense.belongsTo(models.category,{
+        foreignKey: 'categoryId',
+        as: 'Category' 
+      });
     }
   }
   
@@ -31,6 +35,17 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: true,
         len: [1, 255]
       }
+    },
+    categoryId : {
+      type : DataTypes.INTEGER,
+      allowNull : false,
+      references : {
+        name : 'categories',
+        key : 'id',
+      },
+      onUpdate : 'CASCADE',
+      onDelete: 'SET NULL'
+
     },
     category: {
       type: DataTypes.ENUM(
