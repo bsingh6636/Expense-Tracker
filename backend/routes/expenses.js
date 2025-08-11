@@ -2,12 +2,15 @@ const express = require('express');
 const router = express.Router();
 const { Expense } = require('../models');
 const { validateExpense } = require('../middleware/validation');
-const { createExpense, getExpenses } = require('../controllers/expense');
+const { createExpense, getExpenses, getLatestBalance } = require('../controllers/expense');
 
 // GET /api/expenses - Get all expenses
 router.get('/',  (req, res) => {
    getExpenses(req , res)
 });
+
+router.get('/latestBalance', (req , res) => getLatestBalance(req , res) )
+
 
 // GET /api/expenses/:id - Get single expense
 router.get('/:id', async (req, res) => {
@@ -83,15 +86,5 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// GET /api/expenses/summary/categories - Get category summary
-// router.get('/summary/categories', async (req, res) => {
-//   try {
-//     const summary = await Expense.getCategorySummary();
-//     res.json(summary);
-//   } catch (error) {
-//     console.error('Error fetching category summary:', error);
-//     res.status(500).json({ error: 'Failed to fetch category summary' });
-//   }
-// });
 
 module.exports = router;

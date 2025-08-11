@@ -9,7 +9,7 @@ const { Op } = db.Sequelize;
 const createExpense = async params => {
   try {
 
-    const { amount, description, category, date, txn_type, payment_method, balance } = params;;
+    const { amount, description, category, date, txn_type, payment_method, balance, categoryId } = params;;
 
     if (category == 'friend' && !params.friendId) {
       return { error: 'Friend ID is required for friend category' };
@@ -21,6 +21,7 @@ const createExpense = async params => {
       category,
       txn_type,
       payment_method,
+      categoryId,
       current_balance: balance,
       friendId: params.friendId,
       date: date ? new Date(date) : new Date()
@@ -74,9 +75,40 @@ const getExpenses = async (req, res) => {
   }
 }
 
+const getLatestBalance = async (req, res) => {
+  try {
+    const query = `
+              SELECT current_balance, payment_method 
+              FROM expenses 
+              WHERE "createdAt" = (
+                  SELECT MAX("createdAt")
+                  FROM expenses AS e2
+                  WHERE e2.payment_method = expenses.payment_method
+              );
+            `;
+
+    const [rows] = await db.sequelize.query(query);
+
+    res.json({
+      success: true,
+      status: 200,
+      data: rows
+    });
+  } catch (error) {
+    logger.error(error);
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: 'Internal Server Error'
+    });
+  }
+};
+
+
 
 
 module.exports = {
   createExpense,
   getExpenses,
+  getLatestBalance
 }
