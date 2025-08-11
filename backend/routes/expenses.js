@@ -9,6 +9,8 @@ router.get('/',  (req, res) => {
    getExpenses(req , res)
 });
 
+router.get('/health' ,( req , res ) => res.json('success') )
+
 router.get('/latestBalance', (req , res) => getLatestBalance(req , res) )
 
 
