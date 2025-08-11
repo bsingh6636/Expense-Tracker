@@ -18,6 +18,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
+app.get('/health', (req , res) => res.json('success') )
+
 // Routes
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/friends', friendRoutes);
