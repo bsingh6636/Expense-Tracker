@@ -51,3 +51,5 @@ db.sequelize.authenticate().then(() => {
 }).catch(err => {
   logger.error('Unable to connect to database:', err);
 });
+
+module.exports = app;
