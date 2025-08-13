@@ -108,6 +108,7 @@ export const getFriends = async () => {
 
 export const getCategories = async () =>{
   try {
+    console.log('ca')
     const res = await api.get('/category');
     return res.data?.data;
   } catch (error) {
