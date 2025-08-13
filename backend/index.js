@@ -7,6 +7,7 @@ const friendRoutes = require('./routes/friends');
 const categoryRoutes = require('./routes/category')
 const db = require('./models');
 const logger = require('./utils/logger');
+require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
