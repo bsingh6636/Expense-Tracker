@@ -19,7 +19,8 @@ app.use(cors({
         'https://expense-tracker-pnck.vercel.app',
         'https://expense-tracker-seven-lemon-62.vercel.app', 
         'https://expense-tracker-git-master-bsingh6636s-projects.vercel.app', 
-        'https://expense-tracker-ppckes54g-bsingh6636s-projects.vercel.app/'],
+        'https://expense-tracker-ppckes54g-bsingh6636s-projects.vercel.app/',
+    'https://expense-traker.brijesh.fun'],
     credentials: true,
 }));
 app.use(express.json());
