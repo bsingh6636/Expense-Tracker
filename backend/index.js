@@ -15,11 +15,10 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({
     origin: [
-        'http://localhost:3000', 
-        'https://expense-tracker-pnck.vercel.app',
-        'https://expense-tracker-seven-lemon-62.vercel.app', 
-        'https://expense-tracker-git-master-bsingh6636s-projects.vercel.app', 
-        'https://expense-tracker-ppckes54g-bsingh6636s-projects.vercel.app/'],
+        'http://localhost:3000',
+        'https://expense-tracker.brijeshdev.space',
+        'https://expense-tracker.brijesh.fun'
+    ],
     credentials: true,
 }));
 app.use(express.json());

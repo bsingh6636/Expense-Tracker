@@ -78,7 +78,7 @@ const getExpenses = async (req, res) => {
 const getLatestBalance = async (req, res) => {
   try {
     const query = `
-              SELECT current_balance, payment_method 
+              SELECT *
               FROM expenses 
               WHERE "createdAt" = (
                   SELECT MAX("createdAt")

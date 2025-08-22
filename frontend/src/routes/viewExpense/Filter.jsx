@@ -7,7 +7,6 @@ const Filter = ({ filter, updateFilter, categories, friends, getExpenses }) => {
         getExpenses(data);
         updateFilter(data);
     }
-
     
     return (
         <div className="flex gap-10 mb-2" >

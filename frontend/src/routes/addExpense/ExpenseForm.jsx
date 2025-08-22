@@ -30,7 +30,7 @@ const FormMessage = ({ children }) => {
   return <p className="text-sm font-medium text-destructive mt-2">{children}</p>;
 };
 
-export const ExpenseForm = ({ getLatestBalance, fetchExpenses, categories }) => {
+export const ExpenseForm = ({ getLatestBalance, fetchExpenses, categories, getLatestBalanceForAll }) => {
   const [formData, setFormData] = useState(initialFormData);
   const [friends, setFriends] = useState([]);
   const [errors, setErrors] = useState({});
@@ -103,6 +103,7 @@ export const ExpenseForm = ({ getLatestBalance, fetchExpenses, categories }) => 
       await createExpense(expenseData);
       fetchExpenses(); // Refresh the expenses list
       setFormData(initialFormData); // Reset form to initial state
+      getLatestBalanceForAll(); // Refresh latest balances
     } catch (err) {
       console.error('Error saving expense:', err);
       setErrors({ form: 'An unexpected error occurred. Please try again.' });
